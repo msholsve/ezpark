@@ -50,12 +50,12 @@ function fillTableWithRooms(rooms) {
 
 function bindListItemToRoom(id, name) {
     $("#" + id).click(function () {
-	    showRoom(name);
+	showRoom(id, name);
     });
 }
 
-function showRoom(name) {
-    $.getJSON(roomsJSON + "/" + name, function(roomWithImage) {
+function showRoom(id, name) {
+    $.getJSON(roomsJSON + "/" + id, function(roomWithImage) {
 	$("#lesesaler").fadeOut("slow");
 	$("#info").fadeOut("slow", function() {
 	    $("#button").fadeIn("slow");
@@ -73,10 +73,8 @@ function showRoom(name) {
 
 	    var refresh = setInterval( function () {
 		$.getJSON(
-		    roomsJSON + "/" + name + "?projection={\"map\":%200}",
+		    roomsJSON + "/" + id + "?projection={\"map\":%200}",
 		    function (roomWithoutImage) {
-			console.log(roomWithoutImage.seats[0]);
-			console.log(roomWithoutImage.seats[1]);
 			clearSeatsOnImage();
 			placeSeatsOnImage(roomWithoutImage.seats);
 			
@@ -101,8 +99,9 @@ function setImageAsBackground(image) {
 }
 
 function placeSeatsOnImage(seats) {
+    var free;
     for (i = 0; i < seats.length; i++) {
-	var free = "#00FF00";
+	free = "#00FF00";
 	if (seats[i].free == false) {
 	    free = "#FF0000";
 	}
