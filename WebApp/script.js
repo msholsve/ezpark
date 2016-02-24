@@ -2,66 +2,95 @@ $(document).ready(function() {
     $("#lesesaler").hide();
     $("#info").hide();
     $("#roomImage").hide();
-    generateRoomsTable("./rooms.json");
+    $("#button").hide();
+    showRooms("http://isit.routable.org/rooms");
 
 });
 
-function generateRoomsTable(jsonFile) {
-    $("#info").show();
-    $("#lesesaler").show();
-    $.getJSON(jsonFile, function(result) {
-	var rooms = result._items;
+function showRooms(roomsJSON) {
+    $.getJSON(roomsJSON, function(result) {
+	$("#info").fadeOut("slow");
+	$("#roomImage").fadeOut("slow");
+	$("#button").fadeOut("slow", function() {
+	    $("#roomImage").html("");
+	    $("#info").fadeIn("slow");
+	    $("#lesesaler").fadeIn("slow");
 
-	var table = "<thead>" +
-	    "<tr>" +
-	    "<th>Lesesaler</th><th>Ledige plasser</th>" + 
-	    "</tr>" + 
-	    "</thead>";
+	    $("#info").html("Velkommen til iSit. Velg en lesesal for mer informasjon");
+	    var rooms = result._items;
+	    var table = "<thead>" +
+		"<tr>" +
+		"<th>Lesesaler</th><th>Ledige plasser</th>" + 
+		"</tr>" + 
+		"</thead>";
 
-	for (var i = 0; i < rooms.length; i++) {
-	    table += "<tr>" +
-		"<td id=" + rooms[i]._id + ">" +
-		rooms[i].name +
-		"</td><td>" + String(rooms[i].free_seats) + " / " + String(rooms[i].total_seats) +
-		"</td>" +
-		"</tr>";
-	}
+	    for (var i = 0; i < rooms.length; i++) {
+		table += "<tr>" +
+		    "<td id=" + rooms[i]._id + ">" +
+		    rooms[i].name +
+		    "</td><td>" + String(rooms[i].free_seats) + " / " + String(rooms[i].total_seats) +
+		    "</td>" +
+		    "</tr>";
+	    }
 
-	$("#lesesaler").html(table);
+	    $("#lesesaler").html(table);
 
-	for (i = 0; i < rooms.length; i++) {
-	    bindListItemToRoom(rooms[i]);
-	}
+	    for (i = 0; i < rooms.length; i++) {
+		bindListItemToRoom(rooms[i]._id, roomsJSON + "/" + rooms[i].name);
+	    }
+	});
     });
 }
 
-function bindListItemToRoom(room) {
-    $("#" + room._id).click(function () {
-	    showRoom(room.name);
+function bindListItemToRoom(roomId, roomJSON) {
+    $("#" + roomId).click(function () {
+	    showRoom(roomJSON);
     });
 }
 
-function showRoom(name) {
-    $.getJSON("./room.json", function(result) {
-	$("#roomImage").attr("src", "data:image/png;base64," + result.map.file);
-    });
-    $("#lesesaler").fadeOut("slow");
-    $("#info").fadeOut("slow", function() {
-	$("#info").html("Du valgte " + name);
-	$("#roomImage").fadeIn("slow");
-	$("#info").fadeIn("slow");
-    });
-}
+function showRoom(roomJSON) {
+    $.getJSON(roomJSON, function(result) {
+	$("#lesesaler").fadeOut("slow");
+	$("#info").fadeOut("slow", function() {
+	    $("#button").fadeIn("slow");
+	    $("#roomImage").fadeIn("slow");
+	    $("#info").fadeIn("slow");
 
-function testRemoteJSON() {
-    var root = 'http://jsonplaceholder.typicode.com';
-    var data = {url: root + '/posts/1',
-		method: 'GET'};
-    
-    $.ajax(data).then(remoteJSONCallback);
-    
-}
 
-function remoteJSONCallback( data ) {
-    console.log(data);
+	    $("#info").html("Du valgte " + result.name);
+
+	    var img = new Image();
+	    img.src = "data:image/png;base64," + result.map.file;
+	    $("#roomImage").css({
+		"height":img.height + "px",
+		"width":img.width + "px",
+		"background-image":
+		"url('" + img.src + "')"
+		});
+
+	    
+	    for (i = 0; i < result.seats.length; i++) {
+		var free = "#00FF00";
+		if (result.seats[i].free == false) {
+		    free = "#FF0000";
+		}
+
+		$("#roomImage").append(
+		    $('<div><div>').css({
+			position: 'relative',
+			top: result.seats[i].location.y + "px",
+			left: result.seats[i].location.x + "px",
+			width: "10px",
+			height: "10px",
+			background: free
+		    })
+		);
+	    }
+
+	    $("#button").html("Tilbake");
+	    $("#button").click( function () {
+		showRooms("http://isit.routable.org/rooms");
+	    });
+	});
+    });
 }
