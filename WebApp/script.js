@@ -8,7 +8,7 @@ $(document).ready(function() {
 
 });
 
-var roomsJSON = "http://isit.routable.org/rooms";
+var roomsJSON = "http://isit.routable.org/api/rooms";
 
 function showRooms() {
     $.getJSON(roomsJSON, function(result) {
