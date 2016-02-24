@@ -1,0 +1,46 @@
+package no.ntnu.eit.group_d;
+
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class SensorSimulator extends JFrame {
+
+	
+	private JTabbedPane tabPane;
+	
+	public SensorSimulator() {
+		initUI();		
+	}
+	
+	private void initUI() {
+		tabPane = new JTabbedPane();
+		
+        setTitle("Sensor simulator");
+        setSize(500, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        tabPane.addTab("Room 1", new Room(10));
+        tabPane.addTab("Room 2", new Room(40));
+        tabPane.addTab("Room 3", new Room(20));
+        
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(tabPane, BorderLayout.CENTER);       
+       
+    }
+	
+	public static void main(String[] args) {
+		SensorSimulator window = new SensorSimulator();
+		window.setVisible(true);
+	}
+	
+}

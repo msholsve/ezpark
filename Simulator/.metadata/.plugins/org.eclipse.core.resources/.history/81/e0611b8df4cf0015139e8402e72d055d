@@ -1,0 +1,23 @@
+package no.ntnu.eit.group_d;
+
+public class SeatChangeSimulation implements Runnable {
+
+	private boolean keepRunning;
+	
+	public SeatChangeSimulation() {
+		keepRunning = true;
+	}
+	
+	public void stop() {
+		keepRunning = true;
+	}
+	
+    public void run() {
+        
+    	while(keepRunning) {
+    		
+    	}
+    	
+    }
+
+}

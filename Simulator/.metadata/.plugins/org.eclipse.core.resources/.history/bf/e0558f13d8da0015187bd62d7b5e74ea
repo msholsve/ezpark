@@ -1,0 +1,15 @@
+package no.ntnu.eit.group_d;
+
+import org.json.simple.JSONObject;
+
+public class Seat {
+
+	String name;
+	boolean free;
+	
+	
+	public Seat(JSONObject jsonObj) {
+		
+	}
+	
+}
