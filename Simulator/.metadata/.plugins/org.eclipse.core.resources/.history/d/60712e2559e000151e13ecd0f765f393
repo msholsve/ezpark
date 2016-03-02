@@ -36,7 +36,7 @@ public class SeatChangeSimulation implements Runnable {
     		seats[randomIndex].doClick();
     		
     		try {
-				Thread.sleep(randomGenerator.nextInt((10000 - 1000) + 1) + 1000);
+				Thread.sleep(randomGenerator.nextInt(5000));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
