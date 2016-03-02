@@ -32,7 +32,32 @@ public class SensorSimulator extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-        JSONParser parser = new JSONParser();
+        loadRooms();
+        
+        
+       // tabPane.addTab("Room 1", new Room(10));
+        //tabPane.addTab("Room 2", new Room(40));
+        //tabPane.addTab("Room 3", new Room(20));
+        
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(tabPane, BorderLayout.CENTER);       
+        
+        JPanel panel = new JPanel();
+        getContentPane().add(panel, BorderLayout.SOUTH);
+       
+        JButton btnReloadAllRooms = new JButton("Reload all rooms");
+        btnReloadAllRooms.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		loadRooms();
+        	}
+        });
+        panel.add(btnReloadAllRooms);
+       
+    }
+	
+	public void loadRooms() {
+		JSONParser parser = new JSONParser();
         
         try {
 			String rooms = HttpHelper.getHttp("http://isit.routable.org/api/rooms");
@@ -40,7 +65,8 @@ public class SensorSimulator extends JFrame {
 			
 			JSONObject obj = (JSONObject)parser.parse(rooms);
 			JSONArray jsonArray = (JSONArray)obj.get("_items");
-			
+			tabPane.removeAll();
+			 
 			for(int i = 0; i < jsonArray.size(); i++) {
 				
 				JSONObject jobj = (JSONObject)jsonArray.get(i);
@@ -61,16 +87,8 @@ public class SensorSimulator extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        
-       // tabPane.addTab("Room 1", new Room(10));
-        //tabPane.addTab("Room 2", new Room(40));
-        //tabPane.addTab("Room 3", new Room(20));
-        
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(tabPane, BorderLayout.CENTER);       
-       
-    }
+	}
+	
 	
 	public static void main(String[] args) {
 		try {

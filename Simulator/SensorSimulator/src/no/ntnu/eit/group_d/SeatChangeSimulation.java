@@ -9,16 +9,25 @@ public class SeatChangeSimulation implements Runnable {
 	private JCheckBox[] seats;
 	private boolean keepRunning;
 	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public SeatChangeSimulation(JCheckBox[] seats) {
 		keepRunning = true;
 		this.seats = seats;
 		
 	}
 	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
 	public void stopAsync() {
 		keepRunning = false;
 	}
 	
+    /**
+     * @wbp.parser.entryPoint
+     */
     public void run() {
     	Random randomGenerator = new Random();
     	

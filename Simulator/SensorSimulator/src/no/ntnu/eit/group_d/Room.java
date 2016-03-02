@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -81,18 +82,24 @@ public class Room extends JComponent {
 	private void loadSeats(String url) {
 		try {
 			JSONParser parser = new JSONParser();
-			String roomData = HttpHelper.getHttp(url);
+			String roomData = HttpHelper.getHttp(url + "?projection={\"map\":0}");
 			JSONObject roomsObj = (JSONObject)parser.parse(roomData);
 			this.id = (String)roomsObj.get("_id");
 			this.roomUrl = url;
 			
 			JSONArray seatJsons = (JSONArray)roomsObj.get("seats");
-			seats = new Seat[seatJsons.size()];	
-	        for(int i = 0; i < seatJsons.size(); i++) {
-		    	this.seats[i] = new Seat((JSONObject)seatJsons.get(i));
-		    	this.seats[i].addActionListener(new CheckBoxListener());
-		    	this.seatsPanel.add(this.seats[i]);	
-	        }
+			
+			if(seatJsons != null) {
+				seats = new Seat[seatJsons.size()];	
+		        for(int i = 0; i < seatJsons.size(); i++) {
+			    	this.seats[i] = new Seat((JSONObject)seatJsons.get(i));
+			    	this.seats[i].addActionListener(new CheckBoxListener());
+			    	this.seatsPanel.add(this.seats[i]);	
+		        }
+			} else {
+				this.seatsPanel.add(new JLabel("No seats in this room"));
+			}
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

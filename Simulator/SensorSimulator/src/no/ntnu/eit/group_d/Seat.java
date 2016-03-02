@@ -14,7 +14,12 @@ public class Seat extends JCheckBox {
 	public Seat(JSONObject jsonObj) {
 		name = (String)jsonObj.get("name");
 		this.setText(name);
-		setSelected(!(Boolean)jsonObj.get("free"));
+		
+		if(jsonObj.containsKey("free"))
+			setSelected(!(Boolean)jsonObj.get("free"));
+		else 
+			setEnabled(false);
+		
 		id = (String)jsonObj.get("_id");
 		
 		if(this.isSelected()) {
