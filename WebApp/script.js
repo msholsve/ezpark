@@ -92,6 +92,7 @@ function showRoom(id, name) {
 
 function setImageAsBackground(image) {
     $("#roomImage").css({
+        "position":'relative',
 	"height":image.naturalHeight + "px",
 	"width":image.naturalWidth + "px",
 	"background-image":"url('" + image.src + "')"
@@ -108,7 +109,7 @@ function placeSeatsOnImage(seats) {
 	
 	$("#roomImage").append(
 	    $('<div><div>').css({
-		position: 'relative',
+		position: 'absolute',
 		top: seats[i].location.y + "px",
 		left: seats[i].location.x + "px",
 		width: "10px",
