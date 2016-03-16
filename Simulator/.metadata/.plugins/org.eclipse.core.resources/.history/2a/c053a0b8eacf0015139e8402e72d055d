@@ -1,0 +1,19 @@
+package no.ntnu.eit.group_d;
+
+import javax.swing.*;
+
+public class SensorSimulator extends JFrame {
+
+	public SensorSimulator() {
+		initUI();		
+	}
+	
+	private void initUI() {
+        setTitle("Simple example");
+        setSize(300, 200);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+	
+	
+}

@@ -1,0 +1,54 @@
+package no.ntnu.eit.group_d;
+
+import java.util.Random;
+
+import javax.swing.JCheckBox;
+
+public class SeatChangeSimulation implements Runnable {
+
+	private JCheckBox[] seats;
+	private boolean keepRunning;
+	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
+	public SeatChangeSimulation(JCheckBox[] seats) {
+		keepRunning = true;
+		this.seats = seats;
+		
+	}
+	
+	/**
+	 * @wbp.parser.entryPoint
+	 */
+	public void stopAsync() {
+		keepRunning = false;
+	}
+	
+    /**
+     * @wbp.parser.entryPoint
+     */
+    public void run() {
+    	Random randomGenerator = new Random();
+    	
+    	while(keepRunning) {
+    		int randomIndex = randomGenerator.nextInt(seats.length);
+    		seats[randomIndex].doClick();
+    		
+    		try {
+				Thread.sleep(randomGenerator.nextInt((10000 - 1000) + 1) + 1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    		if (Thread.currentThread().isInterrupted()) {
+    			  // cleanup and stop execution
+    			  // for example a break in a loop
+    			break;
+    		}
+    	}
+    	
+    }   
+    
+}

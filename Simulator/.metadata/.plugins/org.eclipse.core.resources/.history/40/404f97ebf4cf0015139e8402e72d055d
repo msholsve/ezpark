@@ -1,0 +1,9 @@
+package no.ntnu.eit.group_d;
+
+import javax.swing.JComponent;
+
+public class Room extends JComponent {
+	
+	
+
+}

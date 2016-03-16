@@ -99,6 +99,7 @@ function showListView() {
 function showMapView() {
 }
 
+<<<<<<< HEAD
 
 function showDetailedView( id, name ) {
     return $.getJSON( roomsJSON + '/' + id, function( roomWithImage ) { 
@@ -168,6 +169,14 @@ function setImageAsBackground( image ) {
 	'height':image.naturalHeight + 'px',
 	'width':image.naturalWidth + 'px',
 	'background-image':"url('" + image.src + "')"
+=======
+function setImageAsBackground(image) {
+    $("#roomImage").css({
+        "position":'relative',
+	"height":image.naturalHeight + "px",
+	"width":image.naturalWidth + "px",
+	"background-image":"url('" + image.src + "')"
+>>>>>>> 5c49aa15ec3bd29032edbb5428bf725f799eae28
 	});
 }
 
@@ -180,6 +189,7 @@ function placeSeatsOnImage( seats ) {
 	    free = '#FF0000';
 	}
 	
+<<<<<<< HEAD
 	$( '#roomImage' ).append(
 	    $( '<div><div>' ).css({
 		position: 'relative',
@@ -187,6 +197,15 @@ function placeSeatsOnImage( seats ) {
 		left: seats[i].location.x + 'px',
 		width: '10px',
 		height: '10px',
+=======
+	$("#roomImage").append(
+	    $('<div><div>').css({
+		position: 'absolute',
+		top: seats[i].location.y + "px",
+		left: seats[i].location.x + "px",
+		width: "10px",
+		height: "10px",
+>>>>>>> 5c49aa15ec3bd29032edbb5428bf725f799eae28
 		background: free
 	    })
 	);

@@ -1,0 +1,46 @@
+package no.ntnu.eit.group_d;
+
+
+import java.awt.FlowLayout;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class SensorSimulator extends JFrame {
+
+	public SensorSimulator() {
+		initUI();		
+	}
+	
+	private class CheckBoxListener implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+						
+		}
+	}
+	
+	private void initUI() {
+        setTitle("Sensor simulator");
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        FlowLayout flowLayout = new FlowLayout();
+        this.setLayout(flowLayout);
+        
+        for(int i = 0; i < 100; i++) {
+        	JCheckBox cb = new JCheckBox("Seat " + i);
+        	cb.addChangeListener(new CheckBoxListener());
+        	this.add(cb);
+        }
+        
+        this.setMaximumSize( this.getPreferredSize() );
+        
+    }
+	
+	public static void main(String[] args) {
+		SensorSimulator window = new SensorSimulator();
+		window.setVisible(true);
+	}
+	
+}
