@@ -17,9 +17,18 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <!-- Mazemap -->
-    <link rel="stylesheet" href="mazemap.css">
-    <script type="text/javascript" src="mazemap.js"></script>   
+    <link rel="stylesheet" href='http://api.mazemap.com/js/v1.0.0/mazemap.min.css'>
+	  <script type='text/javascript' src='http://api.mazemap.com/js/v1.0.0/mazemap.min.js'></script>
+    <!--<link rel="stylesheet" href="mazemap.css">-->
+    <!--<script type="text/javascript" src="mazemap.js"></script>-->
 
+    <style>
+      #mazemap-container {
+        width: 80vw;
+        height: 50vh;
+      }
+    </style>
+    
     <title>iSit</title>
   </head>
   <body style="background-color:#EEEEEE">
@@ -42,7 +51,9 @@
 	       id="list"></table>
 
 	<div id="map"
-	     class="map-view"></div>
+	     class="map-view">
+        <div id='mazemap-container'></div>
+        </div>
 
 	<div style=""
 	     id="roomImage"
@@ -57,6 +68,9 @@
 
       </div>
     </div>
+
+    <script src="isitMap.js"></script>
     <script src="script.js"></script>
+    
   </body>
 </html>

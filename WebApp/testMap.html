@@ -47,6 +47,9 @@
 				window.open(roomUrl, "_blank");
 			});
 			newMarker.addTo(theMap);
+			newMarker.on("click", function() { 
+				changeView( DETAILEDVIEW, {id: id, name: name} );
+			});	
 			return newMarker;
 		}
 		

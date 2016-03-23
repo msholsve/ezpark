@@ -12,7 +12,7 @@ $( document ).ready( function() {
     $.ajaxSetup({ cache: false });
 
     $( '#info' ).html( 'Velkommen til Isit!' );
-    $( '#map' ).html( 'Her skal kartet være' );
+    $( '#map' ).html( "<div id='mazemap-container'></div>" );
 
     $( '#backButton' ).hide();
     $( '#list' ).hide();
@@ -97,6 +97,11 @@ function showListView() {
 
 
 function showMapView() {
+	var myMap = initMap();
+	$.getJSON( roomsJSON, function( result ) {
+		$( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
+		fillMapWithRooms( myMap, result._items );
+    });
 }
 
 function showDetailedView( id, name ) {
@@ -154,6 +159,14 @@ function fillListWithRooms( rooms ) {
     }
 }
 
+function fillMapWithRooms( map, rooms ) {
+	for ( var i = 0; i < rooms.length; i++ ) {
+		if(rooms[i].geometry != null) {	
+			// If the room got coordinates	
+			addRoomMarker(map,	rooms[i]); 
+		}
+    }
+}
 
 function bindListItemToRoom( id, name ) {
     $( '#' + id ).click( function () {
