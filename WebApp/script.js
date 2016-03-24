@@ -161,11 +161,11 @@ function fillListWithRooms( rooms ) {
 }
 
 function fillMapWithRooms( map, rooms ) {
-	for ( var i = 0; i < rooms.length; i++ ) {
-		if(rooms[i].geometry != null) {	
-			// If the room got coordinates	
-			addRoomMarker(map,	rooms[i]); 
-		}
+    for ( var i = 0; i < rooms.length; i++ ) {
+	if(rooms[i].geometry != null) {	
+	    // If the room got coordinates	
+	    addRoomMarker(map,	rooms[i]); 
+	}
     }
 }
 

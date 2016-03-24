@@ -9,7 +9,7 @@ function initMap() {
 function addRoomMarker(map, room) {
 	
 	var newMarker = Maze.marker(
-		[room.geometry.coordinates[1], room.geometry.coordinates[0] ], 
+		room.geometry.coordinates, 
 		{icon: Maze.icon(
 			{
 				iconUrl: getPieChartUrl(room.free_seats / room.total_seats), 
