@@ -2,6 +2,7 @@ var roomsJSON = 'http://isit.routable.org/api/rooms';
 var currentView;
 var selectedTab;
 var refresh;
+var map;		// MUST be named 'map'
 
 const LISTVIEW = 1;
 const MAPVIEW = 2;
@@ -97,10 +98,10 @@ function showListView() {
 
 
 function showMapView() {
-	var myMap = initMap();
+	map = initMap();
 	$.getJSON( roomsJSON, function( result ) {
 		$( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
-		fillMapWithRooms( myMap, result._items );
+		fillMapWithRooms( map, result._items );
     });
 }
 

@@ -1,14 +1,15 @@
 
 function initMap() {
-	var mazeMap = Maze.map('mazemap-container', {});  
-	mazeMap.setView([63.415, 10.41], 14);
+	var map = Maze.map('mazemap-container', {});  
+	map.setView([63.415, 10.41], 14);
 
-	return mazeMap;
+	return map;
 
 	//mazeMap.fitBounds(Maze.latLngBounds(m1.getLatLng(), m2.getLatLng(), m3.getLatLng()));
 }
 
-function addRoomMarker(theMap, room) {
+
+function addRoomMarker(map, room) {
 	
 	var newMarker = Maze.marker(
 		[room.geometry.coordinates[1], room.geometry.coordinates[0] ], 
@@ -16,7 +17,9 @@ function addRoomMarker(theMap, room) {
 			{
 				iconUrl: getPieChartUrl(room.free_seats / room.total_seats), 
 			 	iconSize: [40, 40]
-			})
+			}),
+			zLevel: 1,			// TODO: fikse zlevel til riktig floor
+			offZOpacity: 0.6	// Shows trasparent icon when the user views the wrong floor
 		}
 	);
 
@@ -31,7 +34,7 @@ function addRoomMarker(theMap, room) {
 		changeView( DETAILEDVIEW, {id: room._id, name: room.name} );
 	});	
 	
-	newMarker.addTo(theMap);
+	newMarker.addTo(map);
 	
 	return newMarker;
 }
