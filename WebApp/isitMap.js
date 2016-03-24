@@ -2,10 +2,7 @@
 function initMap() {
 	var map = Maze.map('mazemap-container', {});  
 	map.setView([63.415, 10.41], 14);
-
 	return map;
-
-	//mazeMap.fitBounds(Maze.latLngBounds(m1.getLatLng(), m2.getLatLng(), m3.getLatLng()));
 }
 
 
@@ -43,16 +40,21 @@ function getPieChartUrl(freeFraction) {
 	var canvas = document.createElement('canvas');
 	canvas.width = 64;
 	canvas.height = 64;
-	var ctx = canvas.getContext("2d");		
+	var ctx = canvas.getContext("2d");	
+	
 	ctx.beginPath();
 	ctx.fillStyle="lightgreen";
 	ctx.arc(32, 32, 32, -Math.PI/2, (Math.PI*2)*freeFraction - Math.PI/2);
 	ctx.lineTo(32, 32); 
 	ctx.fill();
+
 	if(freeFraction < 1.0) {
 		ctx.beginPath();
 		ctx.fillStyle="red";
-		ctx.arc(32, 32, 32, (Math.PI*2)*freeFraction - Math.PI/2, -Math.PI/2);
+		if(freeFraction == 0)
+			ctx.arc(32, 32, 32, 0, Math.PI*2);
+		else
+			ctx.arc(32, 32, 32, (Math.PI*2)*freeFraction - Math.PI/2, -Math.PI/2);
 		ctx.lineTo(32, 32); 
 		ctx.fill();
 	}
