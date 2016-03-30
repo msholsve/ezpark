@@ -1,9 +1,0 @@
-package no.ntnu.eit.group_d;
-
-public class Main {
-
-	public static void main(String[] args) {
-		new SensorSimulator();
-	}
-
-}
