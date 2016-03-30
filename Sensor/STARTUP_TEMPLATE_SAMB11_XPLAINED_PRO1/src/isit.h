@@ -23,7 +23,6 @@
 #define SEAT_CHARACTERISTIC_UUID1			0xcdd772fddd624cee
 #define SEAT_CHARACTERISTIC_UUID2			0xa2fad76dbee2045d
 
-#define OUTPUT_PIN							PIN_LP_GPIO_4
 #define ADC_PIN								ADC_INPUT_CH_GPIO_MS4
 at_ble_status_t set_adv_data(bool value);
 static void seat_primary_service_define(void);

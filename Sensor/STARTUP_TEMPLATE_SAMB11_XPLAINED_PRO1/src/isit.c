@@ -27,34 +27,29 @@ bool sensor_value = false;
 seat_gatt_service_handler_t seat_service_handler;
 at_ble_handle_t connection_handle;
 
-void io_init(void) 
-{
-	struct gpio_config config_gpio_pin;
-	gpio_get_config_defaults(&config_gpio_pin);
-	config_gpio_pin.direction = GPIO_PIN_DIR_OUTPUT;
-	gpio_pin_set_config(OUTPUT_PIN, &config_gpio_pin);
-}
-
 at_ble_status_t set_adv_data(bool value)
 {
 	uint8_t adv_length = 0;
-	uint8_t scan_rsp_data[0];
+	uint8_t scan_length = 0;
+	uint8_t scan_rsp_data[31];
 	uint8_t adv_data[31];
 	//Complete name
 	adv_data[adv_length++] = COMPLETE_NAME_LENGTH + AD_TYPE_FIELD_LENGTH;
 	adv_data[adv_length++] = COMPLETE_LOCAL_NAME;
 	memcpy((adv_data + adv_length), COMPLETE_NAME, COMPLETE_NAME_LENGTH);
 	adv_length = adv_length + COMPLETE_NAME_LENGTH;
-	//Service data
-	adv_data[adv_length++] = 16 + AD_TYPE_FIELD_LENGTH;
-	adv_data[adv_length++] = COMPLETE_LIST_128BIT_SERV_UUIDS;
+
+	//Service data in scan response
+	adv_data[adv_length++] = SENSOR_DATA_LENGTH + 16 + AD_TYPE_FIELD_LENGTH;
+	adv_data[adv_length++] = SERVICE_DATA_128BIT;
 	for(uint8_t i=0;i<8;i++) {
 		adv_data[adv_length+i] = (uint8_t)(SEAT_SERVICE_UUID2>>i*8);
 		adv_data[adv_length+i+8] = (uint8_t)(SEAT_SERVICE_UUID1>>i*8);
 	}
 	adv_length = adv_length + 16;
+	adv_data[adv_length++] = value;
 
-	if (at_ble_adv_data_set(adv_data, adv_length, scan_rsp_data, 0) != AT_BLE_SUCCESS) {
+	if (at_ble_adv_data_set(adv_data, adv_length, scan_rsp_data, scan_length) != AT_BLE_SUCCESS) {
 		DBG_LOG("BLE Broadcast data set failed");
 		return AT_BLE_FAILURE;
 		}else {
@@ -182,15 +177,25 @@ static void configure_adc(void)
 static void timer_callback_fn(void)
 {
 	uint16_t result;
+	bool new_sensor_value;
 	configure_adc();
 	while(adc_read(ADC_PIN, &result) == STATUS_BUSY) {
 	}
-	DBG_LOG("Result: %d", result);
-	if(result > 1000) {
-		gpio_pin_set_output_level(OUTPUT_PIN, true);
+	//DBG_LOG("Result: %d", result);
+	if(result > 1600) {
+		new_sensor_value = false;
 	} else {
-		gpio_pin_set_output_level(OUTPUT_PIN, false);
+		new_sensor_value = true;
 	}
+	if(new_sensor_value != sensor_value) {
+		if(new_sensor_value) {
+			LED_On(LED0);
+		} else {
+			LED_Off(LED0);
+		}
+		value_changed = true;
+	}
+	sensor_value = new_sensor_value;
 }
 
 static void button_cb(void)
@@ -241,11 +246,9 @@ int main(void)
 	ble_mgr_events_callback_handler(REGISTER_CALL_BACK,
 									BLE_GATT_SERVER_EVENT_TYPE,
 									startup_template_app_gatt_server_cb);
-	io_init();
 	/* Intialize LED */
 	led_init();
 	LED_Off(LED0);
-	uint16_t result = 0;
 	while(true)
 	{
 		/* BLE Event task */
@@ -258,10 +261,8 @@ int main(void)
 			seat_sensor_send_notification();
 			DBG_LOG("Sensor value updated: %d", sensor_value);
 			value_changed = false;
-		}
-		
+		}	
 	}
-	DBG_LOG("Ferdig");
 }
 
 static void seat_primary_service_define(void)
