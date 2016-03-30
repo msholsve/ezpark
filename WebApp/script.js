@@ -2,7 +2,6 @@ var roomsJSON = 'http://isit.routable.org/api/rooms';
 var currentView;
 var selectedTab;
 var refresh;
-var map;		// MUST be named 'map'
 
 const LISTVIEW = 1;
 const MAPVIEW = 2;
@@ -52,6 +51,7 @@ function transitionOut( transitionIn, view, params ) {
 	      break;
 
 	  case MAPVIEW:
+	      clearInterval( mapRefresh );
 	      selector = '.map-view';
 	      break;
 
@@ -92,16 +92,22 @@ function transitionIn( view, params ) {
 function showListView() {
 	  return $.getJSON( roomsJSON, function( result ) {
 	      $( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
-	      fillListWithRooms( result._items );
+		  fillListWithRooms(result._items);
 	  });
 }
 
 
 function showMapView() {
-	  $.getJSON( roomsJSON, function( result ) {
-		    $( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
-		    fillMapWithRooms( map, result._items );
-	  });
+	
+	$( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
+
+	
+	mapRefresh = setInterval( function () {
+		$.getJSON( roomsJSON, function( result ) {
+			fillMapWithRooms( map, result._items );
+			console.log("Reloading map");
+		});
+	}, 1000);
 }
 
 function showDetailedView( id, name ) {
@@ -156,15 +162,6 @@ function fillListWithRooms( rooms ) {
 
 	  for ( i = 0; i < rooms.length; i++ ) {
 	      bindListItemToRoom( rooms[i]._id, rooms[i].name );
-	  }
-}
-
-function fillMapWithRooms( map, rooms ) {
-	  for ( var i = 0; i < rooms.length; i++ ) {
-	      if(rooms[i].geometry != null) {
-		        // If the room got coordinates
-		        addRoomMarker(map,	rooms[i]);
-	      }
 	  }
 }
 
