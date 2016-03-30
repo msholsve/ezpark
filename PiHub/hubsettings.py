@@ -49,9 +49,9 @@ class HubSettings():
 
     def __readSettings(self):
         try:
-            f = open(self.__file, 'r')
-            settingsString = f.read()
-            self.__dict__ = json.loads(settingsString)
+            with open(self.__file, 'r') as f:
+                settingsString = f.read()
+                self.__applyDict(json.loads(settingsString))
             return True
         except:
             return False
@@ -61,10 +61,9 @@ class HubSettings():
         if '_HubSettings__file' in settings:
             del settings['_HubSettings__file']
         try:
-            f = open(self.__file, 'w')
-            settingsString = json.dumps(settings, sort_keys = True, indent = 4)
-            f.write(settingsString)
-            f.close()
+            with open(self.__file, 'w') as f:
+                settingsString = json.dumps(settings, sort_keys = True, indent = 4)
+                f.write(settingsString)
             return True
         except:
             return False

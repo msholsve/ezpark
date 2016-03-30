@@ -35,11 +35,11 @@ class APIHandler():
         return room
 
     def CreateRoom(self, roomName):
-        req = requests.post(self.__apiUrl+'rooms', data={'name':roomName})
+        req = requests.post(self.__apiUrl+'rooms', json={'name':roomName})
         return self.__checkRequest(req, 201, "Unable to create room.")
 
     def CreateSeat(self, roomID, seatName):
-        req = requests.post(self.__apiUrl+'seats', data={'name': seatName})
+        req = requests.post(self.__apiUrl+'seats', json={'name':seatName})
         if not self.__checkRequest(req, 201, "Unable to create seat."):
             return None
         room = self.GetRoom(roomID)
@@ -49,13 +49,38 @@ class APIHandler():
         seats.append(req.json()['_id'])
         return req.json()['_id'] if self.SetSeatsOnRoom(room['ID'], seats) else None
 
+    def GetAllSeats(self):
+        req = requests.get(self.__apiUrl+'seats')
+        if not self.__checkRequest(req, 200, 'Unable to get all seats.'):
+            return None
+        seats = {}
+        for seat in req.json()['_items']:
+            free = None;
+            if 'free' in seat:
+                free = seat['free']
+            seats[seat['_id']] = {'free': free, 'name': seat['name']}
+        return seats
+
+    def SeatExists(self, seatID):
+        req = requests.get(self.__apiUrl+'seats/'+seatID)
+        return req.status_code == 200
+
     def SetSeatsOnRoom(self, roomID, seats):
-        req = requests.patch(self.__apiUrl+'rooms/'+roomID, data=json.dumps({'seats':seats}), headers={'Content-Type': 'application/json'})
+        req = requests.patch(self.__apiUrl+'rooms/'+roomID, json={'seats':seats})
         return self.__checkRequest(req, 200, "Unable to update seats.")
 
     def ChangeSeatState(self, seatID, state):
-        req = requests.patch(self.__apiUrl+'seats/'+seatID, data={'free': state})
+        req = requests.patch(self.__apiUrl+'seats/'+seatID, json={'free':state})
         return self.__checkRequest(req, 200, "Unable to update seat state.")
+
+    def GetSeatState(self, seatID):
+        req = requests.get(self.__apiUrl+'seats/'+seatID)
+        if not self.__checkRequest(req, 200, "Unable to update seat state."):
+            return False
+        free = None;
+        if 'free' in req.json():
+            free = req.json()['free']
+        return free
 
     def DeleteSeat(self, seatID):
         req = requests.delete(self.__apiUrl+'seats/'+seatID)
