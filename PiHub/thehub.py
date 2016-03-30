@@ -22,33 +22,22 @@ class TheHub:
         self.__settings = HubSettings(settingsFile)
         self.__api = APIHandler(self.__settings.APIUrl)
         self.__sensors = SensorHandler()
+        self.__sensors.SensorDataHandler = self.HandleSensorData
         self.__updateRate = updateRate
         self.__mutex = threading.Lock()
         self.__pollSensors = polling
 
     def Run(self):
-        #print(self.__settings.Room)
-        thread = threading.Thread(target=self.InputParser, daemon=True)
-        thread.start()
-        while True:
-            time.sleep(self.__updateRate)
-            self.__mutex.acquire()
-            if not self.__pollSensors:
-                self.__mutex.release()
-                continue
-            states = self.__sensors.getSensorStates()
-            for mac, state in states.items():
-                if mac in self.__settings.Bluetooth:
-                    self.__api.ChangeSeatState(self.__settings.Bluetooth[mac], state > 0)
-            self.__mutex.release()
-
-    def InputParser(self):
         while True:
             print('# ', end='', flush=True)
             inputString = sys.stdin.readline()
-            self.__mutex.acquire()
-            self.ExecuteCommand(inputString.split())
-            self.__mutex.release()
+            with self.__mutex:
+                self.ExecuteCommand(inputString.split())
+
+    def HandleSensorData(self, addr, data):
+        with self.__mutex:
+            if addr in self.__settings.Bluetooth:
+                self.__api.ChangeSeatState(self.__settings.Bluetooth[addr], int(data) > 0)
 
     def ExecuteCommand(self, commands):
         try:
@@ -61,14 +50,11 @@ class TheHub:
                 elif command == 'set':
                     self.Set(commands)
                 elif command == 'update':
-                    self.__settings.Update()
+                    pass
                 elif command == 'delete':
                     self.Delete(commands.pop(0), commands.pop(0))
-                elif command == 'statues':
-                    bleMAC = commands.pop(0)
-                    # Test a device and get its information
                 elif command == 'info':
-                    
+                    print(self.__settings.Room)
                     pass
                 elif command == 'help':
                     self.PrintCommandHelp()
@@ -76,8 +62,8 @@ class TheHub:
                     os._exit(0)
                 else:
                     print('{0} is not a valid command.'.format(command))
-
                 self.__settings.Save()
+                self.__settings.Update()
         except Exception as e:
             print('Error while executing command.', e)
             traceback.print_exc()
@@ -104,13 +90,21 @@ class TheHub:
             bleMAC = commands.pop(0)
             self.__settings.Bluetooth[bleMAC] = seatID;
             print('Link added: {0}=>{1}'.format(bleMAC, seatID))
+
+        elif whatToAdd == 'seats':
+            prefix = commands.pop(0)
+            count = int(commands.pop(0))
+            i = 1
+            while i < count+1:
+                seatID = self.__api.CreateSeat(self.__settings.Room['ID'], prefix + str(i))
+                i += 1
         else:
             print('{0} cannot be added.'.format(whatToAdd))
 
     def List(self, whatToList):
         dictionary = {}
         if whatToList == 'sensors':
-            dictionary = self.__sensors.getSensorStates()
+            dictionary = self.__sensors.getAvaliableSensors()
         elif whatToList == 'seats':
             for seatID, name in self.__settings.Room['seats'].items():
                 dictionary[seatID] = {'free': self.__api.GetSeatState(seatID), 'name': name}
@@ -147,6 +141,14 @@ class TheHub:
             self.__settings.Update()
         elif whatToDelete == 'link':
             del self.__settings.Bluetooth[name]
+        elif whatToDelete == 'all':
+            if name == 'seats':
+                for seatID, name in self.__settings.Room['seats'].items():
+                    self.__api.DeleteSeat(seatID)
+            elif name == 'links':
+                self.__settings.Bluetooth = {}
+            else:
+                print('Cannot delete all {0}.'.format(name))
         else:
             print('{0} cannot be deleted.'.format(whatToDelete))
 
@@ -166,13 +168,11 @@ class TheHub:
 
 
     def PrintCommandHelp(self):
-        print("""new \n\tseat <new seatName/existing seatID>\n\tlink <seatID> <bleMAC>
+        print("""new \n\tseat <new seatName/existing seatID>\n\tlink <seatID> <bleMAC>\n\tseats <prefix> <count>
 list \n\tdevices\n\tseats\n\tallseats\n\tlinks
 set\n\tseatstate\tfree/occupied\n\tsensorpolling\tenabled/disabled
 update
-delete \n\tseat <seatID>\n\tlink <bleMAC>
-testdevice <bleMAC>
-info
+delete \n\tseat <seatID>\n\tlink <bleMAC>\n\tall seats/links
 help
 quit""")
 
@@ -182,10 +182,10 @@ def signal_handler(signal, frame):
     os._exit(0)
 
 if __name__ == "__main__":
-    #signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', help='Path to settings file', type=str, metavar='<path>')
-    parser.add_argument('-p', help='Start polling', default=True)
+    parser.add_argument('-p', help='Start polling', action='store_false')
     parser.add_argument('-d', help='Enable debug output', action='store_true')
     args = parser.parse_args()
     debug = args.d

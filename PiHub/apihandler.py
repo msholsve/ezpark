@@ -39,7 +39,7 @@ class APIHandler():
         return self.__checkRequest(req, 201, "Unable to create room.")
 
     def CreateSeat(self, roomID, seatName):
-        req = requests.post(self.__apiUrl+'seats', json={'name':seatName})
+        req = requests.post(self.__apiUrl+'seats', json={'name':seatName, 'free':True})
         if not self.__checkRequest(req, 201, "Unable to create seat."):
             return None
         room = self.GetRoom(roomID)
