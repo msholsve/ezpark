@@ -10,6 +10,20 @@
 	</list>
 	<section name="CallHierarchySearchScope">
 	</section>
+	<section name="FatJarPackageWizard">
+		<item value="/home/even/Documents/Skole/EIT/ezpark/Simulator" key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION"/>
+		<item value="SensorSimulator - SensorSimulator" key="FatJarPackageWizardPage.LAUNCH_CONFIGURATION_SELECTION_NAME"/>
+		<item value="SensorSimulator/build/SeatRoomSimulator.jar" key="FatJarPackageWizardPage.DESTINATION_PATH_SELECTION"/>
+		<item value="false" key="FatJarPackageWizardPage.ANTSCRIPT_SAVE"/>
+		<item value="1" key="FatJarPackageWizardPage.LIBRARY_HANDLING"/>
+		<list key="FatJarPackageWizardPage.DESTINATION_NAMES_ID">
+			<item value="SensorSimulator/build/SeatRoomSimulator.jar"/>
+		</list>
+		<list key="FatJarPackageWizardPage.ANTSCRIPT_LOCATION_HISTORY">
+			<item value="/home/even/Documents/Skole/EIT/ezpark/Simulator.xml"/>
+			<item value=".xml"/>
+		</list>
+	</section>
 	<section name="SearchInDialog">
 		<item value="true" key="SearchInProjects"/>
 		<item value="true" key="SearchInAppLibs"/>

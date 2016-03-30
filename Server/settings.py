@@ -10,6 +10,12 @@ rooms_schema = {
     'map': {
         'type': 'media'
     },
+    'geometry': {
+        'type': 'point'
+    },
+    'floorId': {
+        'type': 'integer'
+    },
     'seats': {
         'type': 'list',
         'schema': {
