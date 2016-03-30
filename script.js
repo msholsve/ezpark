@@ -1,7 +1,8 @@
 var roomsJSON = 'http://isit.routable.org/api/rooms';
 var currentView;
 var selectedTab;
-var refresh;
+var detailedRefresh;
+var listRefresh;
 
 const LISTVIEW = 1;
 const MAPVIEW = 2;
@@ -47,6 +48,7 @@ function transitionOut( transitionIn, view, params ) {
 
 	  switch( currentView ) {
 	  case LISTVIEW:
+        clearInterval( listRefresh );
 	      selector = '.list-view';
 	      break;
 
@@ -56,7 +58,7 @@ function transitionOut( transitionIn, view, params ) {
 	      break;
 
 	  case DETAILEDVIEW:
-	      clearInterval( refresh );
+	      clearInterval( detailedRefresh );
 	      selector = '.detailed-view';
 	      break;
 
@@ -75,6 +77,7 @@ function transitionIn( view, params ) {
 	  if ( view == LISTVIEW ) {
 	      showListView().done( function() {
 		        $( '.list-view' ).fadeIn( 'fast' );
+            setInterval( refreshListView, 1000 );
 	      } );
 
 	  } else if ( view == MAPVIEW ) {
@@ -84,6 +87,9 @@ function transitionIn( view, params ) {
 	  } else if ( view == DETAILEDVIEW ) {
 	      showDetailedView( params.id, params.name ).done( function() {
 		        $( '.detailed-view' ).fadeIn( 'fast' );
+            setInterval( function() {
+                refreshDetailedView( params.id )
+            }, 1000);
 	      } );
 	  }
 }
@@ -94,6 +100,12 @@ function showListView() {
 	      $( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
 		  fillListWithRooms(result._items);
 	  });
+}
+
+function refreshListView() {
+    $.getJSON( roomsJSON, function( result ) {
+        fillListWithRooms( result._items );
+    } );
 }
 
 
@@ -110,6 +122,7 @@ function showMapView() {
 	}, 1000);
 }
 
+
 function showDetailedView( id, name ) {
 	  return $.getJSON( roomsJSON + '/' + id, function( roomWithImage ) {
 
@@ -124,21 +137,21 @@ function showDetailedView( id, name ) {
 		        placeSeatsOnImage( roomWithImage.seats );
 	      }
 
-	      refresh = setInterval( function () {
-		        $.getJSON(
-		            roomsJSON + '/' + id + '?projection={"map":%200}',
-		            function ( roomWithoutImage ) {
-			              clearSeatsOnImage();
-			              placeSeatsOnImage( roomWithoutImage.seats );
-
-		            })
-	      }, 1000);
-
 	      $( '#backButton' ).unbind();
 	      $( '#backButton' ).click( function () {
 		        changeView( selectedTab );
 	      } );
 	  } );
+}
+
+
+function refreshDetailedView( id ) {
+		$.getJSON(
+		    roomsJSON + '/' + id + '?projection={"map":%200}',
+		    function ( roomWithoutImage ) {
+			      clearSeatsOnImage();
+			      placeSeatsOnImage( roomWithoutImage.seats );
+		    })
 }
 
 
