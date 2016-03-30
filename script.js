@@ -77,7 +77,7 @@ function transitionIn( view, params ) {
 	  if ( view == LISTVIEW ) {
 	      showListView().done( function() {
 		        $( '.list-view' ).fadeIn( 'fast' );
-            setInterval( refreshListView, 1000 );
+            listRefresh = setInterval( refreshListView, 1000 );
 	      } );
 
 	  } else if ( view == MAPVIEW ) {
@@ -87,7 +87,7 @@ function transitionIn( view, params ) {
 	  } else if ( view == DETAILEDVIEW ) {
 	      showDetailedView( params.id, params.name ).done( function() {
 		        $( '.detailed-view' ).fadeIn( 'fast' );
-            setInterval( function() {
+            detailedRefresh = setInterval( function() {
                 refreshDetailedView( params.id )
             }, 1000);
 	      } );
@@ -105,6 +105,7 @@ function showListView() {
 function refreshListView() {
     $.getJSON( roomsJSON, function( result ) {
         fillListWithRooms( result._items );
+        console.log("Refreshing list")
     } );
 }
 
@@ -151,6 +152,7 @@ function refreshDetailedView( id ) {
 		    function ( roomWithoutImage ) {
 			      clearSeatsOnImage();
 			      placeSeatsOnImage( roomWithoutImage.seats );
+            console.log("refreshing detailed")
 		    })
 }
 
