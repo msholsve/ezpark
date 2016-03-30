@@ -9,91 +9,91 @@ const MAPVIEW = 2;
 const DETAILEDVIEW = 3;
 
 $( document ).ready( function() {
-    
-    $.ajaxSetup({ cache: false });
+	
+	$.ajaxSetup({ cache: false });
 
-    $( '#info' ).html( 'Velkommen til Isit!' );
-    $( '#map' ).html( "<div id='mazemap-container'></div>" );
+	$( '#info' ).html( 'Velkommen til Isit!' );
+	$( '#map' ).html( "<div id='mazemap-container'></div>" );
 
-    $( '#backButton' ).hide();
-    $( '#list' ).hide();
-    $( '#map' ).hide();
-    $( '#roomImage' ).hide();
+	$( '#backButton' ).hide();
+	$( '#list' ).hide();
+	$( '#map' ).hide();
+	$( '#roomImage' ).hide();
 
-    $( '#listViewTab' ).click( function() {
+	$( '#listViewTab' ).click( function() {
 	selectedTab = LISTVIEW;
 	changeView( LISTVIEW, {} );
-    });
+	});
 
-    $( '#mapViewTab' ).click( function() {
+	$( '#mapViewTab' ).click( function() {
 	selectedTab = MAPVIEW;
 	changeView( MAPVIEW, {} );
-    });
+	});
 
-    currentView = LISTVIEW;
-    selectedTab = LISTVIEW;
-    transitionIn( currentView, {} );
+	currentView = LISTVIEW;
+	selectedTab = LISTVIEW;
+	transitionIn( currentView, {} );
 } );
 
 function changeView( view, params ) {
-    transitionOut( transitionIn, view, params );
-    currentView = view;
+	transitionOut( transitionIn, view, params );
+	currentView = view;
 }
 
 
 function transitionOut( transitionIn, view, params ) {
-    var selector;
+	var selector;
 
-    console.log( 'transition from', currentView, 'to', view );
+	console.log( 'transition from', currentView, 'to', view );
 
-    switch( currentView ) {
-    case LISTVIEW:
+	switch( currentView ) {
+	case LISTVIEW:
 	selector = '.list-view';
 	break;
 
-    case MAPVIEW:
+	case MAPVIEW:
 	selector = '.map-view';
 	break;
 
-    case DETAILEDVIEW:
+	case DETAILEDVIEW:
 	clearInterval( refresh );
 	selector = '.detailed-view';
 	break;
 
-    default:
+	default:
 	console.error( 'view is invalid' );
-    }
+	}
 
-    $( selector ).fadeOut( 'fast' );
-    $( selector ).promise().done( function() {
+	$( selector ).fadeOut( 'fast' );
+	$( selector ).promise().done( function() {
 	transitionIn( view, params );
-    } );
+	} );
 }
 
 
 function transitionIn( view, params ) {
-    if ( view == LISTVIEW ) {
+	if ( view == LISTVIEW ) {
 	showListView().done( function() {
-	    $( '.list-view' ).fadeIn( 'fast' );
+		$( '.list-view' ).fadeIn( 'fast' );
 	} );
 
-    } else if ( view == MAPVIEW ) {
+	} else if ( view == MAPVIEW ) {
 	$( '.map-view' ).fadeIn( 'fast' );
 	showMapView();
 
-    } else if ( view == DETAILEDVIEW ) {
+	} else if ( view == DETAILEDVIEW ) {
 	showDetailedView( params.id, params.name ).done( function() {
-	    $( '.detailed-view' ).fadeIn( 'fast' );
+		$( '.detailed-view' ).fadeIn( 'fast' );
 	} );
-    }
+	}
 }
 
 
 function showListView() {
-    return $.getJSON( roomsJSON, function( result ) {
+	return $.getJSON( roomsJSON, function( result ) {
 	$( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
 	fillListWithRooms( result._items );
-    });
+	});
 }
 
 
@@ -102,11 +102,11 @@ function showMapView() {
 	$.getJSON( roomsJSON, function( result ) {
 		$( '#info' ).html( 'Velg en lesesal fra listen for mer informasjon' );
 		fillMapWithRooms( map, result._items );
-    });
+	});
 }
 
 function showDetailedView( id, name ) {
-    return $.getJSON( roomsJSON + '/' + id, function( roomWithImage ) { 
+	return $.getJSON( roomsJSON + '/' + id, function( roomWithImage ) { 
 	
 	$( '#info' ).html( 'Du valgte ' + roomWithImage.name );
 	$( '#backButton' ).html( 'Tilbake' );
@@ -115,69 +115,70 @@ function showDetailedView( id, name ) {
 	var img = new Image();
 	img.src = 'data:image/png;base64,' + roomWithImage.map.file;
 	img.onload = function () {
-	    setImageAsBackground( img );
-	    placeSeatsOnImage( roomWithImage.seats );
+		setImageAsBackground( img );
+		placeSeatsOnImage( roomWithImage.seats );
 	}
 	
 	refresh = setInterval( function () {
-	    $.getJSON(
+		$.getJSON(
 		roomsJSON + '/' + id + '?projection={"map":%200}',
 		function ( roomWithoutImage ) {
-		    clearSeatsOnImage();
-		    placeSeatsOnImage( roomWithoutImage.seats );
-		    
+			clearSeatsOnImage();
+			placeSeatsOnImage( roomWithoutImage.seats );
+			
 		})
 	}, 1000);
 	
 	$( '#backButton' ).unbind();
 	$( '#backButton' ).click( function () {
-	    changeView( selectedTab );
+		changeView( selectedTab );
 	} );
-    } );
+	} );
 }
 
 
 function fillListWithRooms( rooms ) {
-    var table = '<thead>' +
+	var table = '<thead>' +
 	'<tr>' +
 	'<th>Lesesaler</th><th>Ledige plasser</th>' + 
 	'</tr>' + 
 	'</thead>';
 
-    for ( var i = 0; i < rooms.length; i++ ) {
+	for ( var i = 0; i < rooms.length; i++ ) {
 	table += '<tr>' +
-	    '<td id=' + rooms[i]._id + '>' +
-	    rooms[i].name +
-	    '</td><td>' + String(rooms[i].free_seats) + ' / ' + String(rooms[i].total_seats) +
-	    '</td>' +
-	    '</tr>';
-    }
+		'<td id=' + rooms[i]._id + '>' +
+		rooms[i].name +
+		'</td><td>' + String(rooms[i].free_seats) + ' / ' + String(rooms[i].total_seats) +
+		'</td>' +
+		'</tr>';
+	}
 
-    $( '#list' ).html( table );
+	$( '#list' ).html( table );
 
-    for ( i = 0; i < rooms.length; i++ ) {
+	for ( i = 0; i < rooms.length; i++ ) {
 	bindListItemToRoom( rooms[i]._id, rooms[i].name );
-    }
+	}
 }
 
 function fillMapWithRooms( map, rooms ) {
-    for ( var i = 0; i < rooms.length; i++ ) {
+	for ( var i = 0; i < rooms.length; i++ ) {
 	if(rooms[i].geometry != null) {	
-	    // If the room got coordinates	
-	    addRoomMarker(map,	rooms[i]); 
+		// If the room got coordinates	
+		addRoomMarker(map,	rooms[i]); 
 	}
-    }
+	}
 }
 
 function bindListItemToRoom( id, name ) {
-    $( '#' + id ).click( function () {
+	$( '#' + id ).click( function () {
 	changeView( DETAILEDVIEW, {id: id, name: name} );
-    } );
+	} );
 }
 
 
 function setImageAsBackground( image ) {
-    $( '#roomImage' ).css({
+	$( '#roomImage' ).css({
+	'position': 'relative',
 	'height':image.naturalHeight + 'px',
 	'width':image.naturalWidth + 'px',
 	'background-image':"url('" + image.src + "')"
@@ -186,27 +187,27 @@ function setImageAsBackground( image ) {
 
 
 function placeSeatsOnImage( seats ) {
-    var free;
-    for ( i = 0; i < seats.length; i++ ) {
+	var free;
+	for ( i = 0; i < seats.length; i++ ) {
 	free = '#00FF00';
 	if ( seats[i].free == false ) {
-	    free = '#FF0000';
+		free = '#FF0000';
 	}
 	
 	$( '#roomImage' ).append(
-	    $( '<div><div>' ).css({
-		position: 'relative',
+		$( '<div><div>' ).css({
+		position: 'absolute',
 		top: seats[i].location.y + 'px',
 		left: seats[i].location.x + 'px',
 		width: '10px',
 		height: '10px',
 		background: free
-	    })
+		})
 	);
-    }
+	}
 }
 
 
 function clearSeatsOnImage() {
-    $( '#roomImage' ).html( '' );
+	$( '#roomImage' ).html( '' );
 }
