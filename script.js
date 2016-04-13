@@ -111,9 +111,8 @@ function refreshListView() {
 
 
 function showMapView() {
-
-	$( '#info' ).html( 'Velg en lesesal på for mer informasjon' );
-
+	$( '#info' ).html( 'Velg en lesesal på kartet for mer informasjon' );
+    console.log( "show map" );
 
     mapRefresh = setInterval( function () {
         $.getJSON( roomsJSON, function( result ) {
